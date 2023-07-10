@@ -29,7 +29,7 @@ const Create = ({ dataCenters }: CreateProps) => {
           const latitude = position.coords.latitude;
           const longitude = position.coords.longitude;
           // Reverse geocoding using Google Maps Geocoding API
-          const apiKey = "AIzaSyBXCH2t9l9vfHJRg1twrMDuqblpq7P2po4";
+          const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
           const geocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`;
           fetch(geocodingUrl)
             .then((response) => response.json())
