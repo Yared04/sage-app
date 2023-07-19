@@ -24,7 +24,7 @@ const CreatePage: React.FC<CreateProps> = ({ dataCenters }) => {
 export const getStaticProps: GetStaticProps<CreateProps> = async () => {
   try {
     const response = await axios.get(
-      `${process.env.REACT_APP_BASE_URL}/data-centers`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/data-centers`
     );
     const dataCenters = response.data;
     return { props: { dataCenters } };

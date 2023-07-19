@@ -28,7 +28,9 @@ const Detail = () => {
   const fetchProjectData = async (id: string) => {
     // Perform an API call or use any data fetching method to retrieve the project data
     try {
-      const res = await axios.get(`http://localhost:8080/api/projects/${id}`);
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/projects/${id}`
+      );
       const projectData = res.data.project;
       return projectData.dataCenters;
     } catch (error) {

@@ -10,13 +10,13 @@ import { AppContext } from "./_app";
 
 const Home = () => {
   const [userProjects, setUserProjects] = useState<Project[]>([]);
-  const { state } = useContext(AppContext);
+  const { state, setState } = useContext(AppContext);
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         const userId = state.curUser && state.curUser.id;
         const response = await axios.get(
-          `http://localhost:8080/api/projects/user/${userId}`
+          `${process.env.NEXT_PUBLIC_BASE_URL}/projects/user/${userId}`
         );
         setUserProjects(response.data.projects);
         setCurrentPage(1); // Reset current page when projects are fetched
@@ -25,7 +25,6 @@ const Home = () => {
         setUserProjects([]);
       }
     };
-
     fetchProjects();
   }, [state.curUser]);
   const itemsPerPage = 4;
@@ -51,13 +50,17 @@ const Home = () => {
         <div className="basis-1 sm:basis-3/5">
           <p className="text-3xl font-bold text-primary">Previous Projects</p>
           <div className="mt-10 flex flex-col gap-7">
-            {visibleProjects.map((project, index) => (
-              <Link key={project._id} href={`/projects/${project._id}`}>
-                <Item
-                  props={{ ...project, color_flag: index % 2 ? true : false }}
-                />
-              </Link>
-            ))}
+            {visibleProjects.length > 0 ? (
+              visibleProjects.map((project, index) => (
+                <Link key={project._id} href={`/projects/${project._id}`}>
+                  <Item
+                    props={{ ...project, color_flag: index % 2 ? true : false }}
+                  />
+                </Link>
+              ))
+            ) : (
+              <p className=" text-2xl text-gray-500 ">No projects yet</p>
+            )}
           </div>
           {totalPages > 1 && (
             <div className="flex justify-center mt-8">

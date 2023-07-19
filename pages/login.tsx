@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button } from "../components/Button";
 import Link from "next/link";
-import Image from "next/image";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { AppContext } from "./_app";
+import jwt from "jsonwebtoken";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,8 +12,33 @@ const Login = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [loginError, setLoginError] = useState("");
+  const { state, setState } = useContext(AppContext);
 
   const router = useRouter();
+
+  const setCurUser = () => {
+    const token = window.localStorage.getItem("token");
+    if (token) {
+      try {
+        const decodedToken = jwt.verify(
+          token,
+          "thisisthesecrettoken"
+        ) as jwt.JwtPayload;
+        console.log(decodedToken);
+        if (decodedToken) {
+          setState((prevState: any) => ({
+            ...prevState,
+            curUser: {
+              id: decodedToken.id,
+              username: decodedToken.username,
+            },
+          }));
+        }
+      } catch (error) {
+        console.error("Error verifying token:", error);
+      }
+    }
+  };
 
   const validateEmail = () => {
     if (!email) {
@@ -38,12 +64,16 @@ const Login = () => {
 
     if (email && password) {
       try {
-        const response = await axios.post("http://localhost:8080/api/login", {
-          email,
-          password,
-        });
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/login`,
+          {
+            email,
+            password,
+          }
+        );
         // Handle successful login response
-        localStorage.setItem("token", response.data);
+        window.localStorage.setItem("token", response.data);
+        setCurUser();
         router.push("/");
       } catch (error) {
         setLoginError("Invalid email or password");

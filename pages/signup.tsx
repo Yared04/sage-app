@@ -70,14 +70,15 @@ const Signup = () => {
     ) {
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/register",
+          `${process.env.NEXT_PUBLIC_BASE_URL}/register`,
           {
             username,
             email,
             password,
           }
         );
-        router.push("/");
+
+        router.push("/login");
       } catch (error) {
         setSignupError("Error signing up");
       }
@@ -157,7 +158,7 @@ const Signup = () => {
 
           <p className="text-sm">
             Already have an account?{" "}
-            <Link className="text-[#2EBD0A]" href="login">
+            <Link className="text-primary" href="login">
               Log In
             </Link>
           </p>
